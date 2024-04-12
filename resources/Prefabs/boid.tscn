@@ -1,0 +1,135 @@
+[gd_scene load_steps=8 format=3 uid="uid://ci8eppuea56oc"]
+
+[ext_resource type="Texture2D" uid="uid://362g3d4v4qcq" path="res://resources/image/boid_image.png" id="1_ol7qb"]
+[ext_resource type="Script" path="res://resources/script/boid_move.gd" id="1_tgn8j"]
+[ext_resource type="Script" path="res://resources/Prefabs/EntityArea.gd" id="3_nr2k2"]
+[ext_resource type="Script" path="res://resources/Prefabs/Vision.gd" id="4_dy55m"]
+[ext_resource type="Script" path="res://resources/Prefabs/BarrierVision.gd" id="5_13s3f"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_avpg7"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wgya8"]
+radius = 120.0
+
+[node name="Boid" type="Node2D" node_paths=PackedStringArray("sprite", "vision", "barrier_vision")]
+rotation = -1.5708
+script = ExtResource("1_tgn8j")
+screen_size = Vector2(1152, 640)
+edge_distance = 32
+sprite = NodePath("Sprite2D")
+vision = NodePath("Vision")
+barrier_vision = NodePath("Vision/BarrierVision")
+seperate_radius = 70.0
+speed = 120.0
+max_speed = 180.0
+max_force = 30.0
+seperation_force_rate = 5.0
+alignment_force_rate = 0.1
+coheasion_force_rate = 0.12
+max_acceleration_rate = 40.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.901961, 0.701961, 0.196078, 1)
+rotation = 1.5708
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_ol7qb")
+
+[node name="EntityArea" type="Area2D" parent="."]
+visible = false
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("3_nr2k2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EntityArea"]
+shape = SubResource("CircleShape2D_avpg7")
+
+[node name="Vision" type="Area2D" parent="." node_paths=PackedStringArray("self_entity_area", "vision_edge_left", "vision_edge_right")]
+visible = false
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("4_dy55m")
+vision_field = 70.0
+self_entity_area = NodePath("../EntityArea")
+vision_edge_left = NodePath("VisionEdgeLeft")
+vision_edge_right = NodePath("VisionEdgeRight")
+
+[node name="VisionShape" type="CollisionShape2D" parent="Vision"]
+shape = SubResource("CircleShape2D_wgya8")
+debug_color = Color(1, 1, 1, 0.0705882)
+
+[node name="VisionEdgeLeft" type="RayCast2D" parent="Vision"]
+target_position = Vector2(120, 0)
+
+[node name="VisionEdgeRight" type="RayCast2D" parent="Vision"]
+target_position = Vector2(120, 0)
+
+[node name="BarrierVision" type="Node2D" parent="Vision"]
+visible = false
+script = ExtResource("5_13s3f")
+
+[node name="BarrierVisionRay" type="RayCast2D" parent="Vision/BarrierVision"]
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay2" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = 0.0872665
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay3" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = 0.174533
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay4" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = 0.261799
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay5" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = 0.349066
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay6" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = -0.0872665
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay7" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = -0.174533
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay8" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = -0.261799
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="BarrierVisionRay9" type="RayCast2D" parent="Vision/BarrierVision"]
+rotation = -0.349066
+target_position = Vector2(120, 0)
+collision_mask = 4
+collide_with_areas = true
+collide_with_bodies = false
+
+[connection signal="self_destroy" from="EntityArea" to="." method="destroy"]
+[connection signal="area_entered" from="Vision" to="Vision" method="_on_area_entered"]
+[connection signal="area_exited" from="Vision" to="Vision" method="_on_area_exited"]
